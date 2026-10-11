@@ -187,13 +187,13 @@ def breathe_layer(t_local, dur):
     grow = 0.5 - 0.5 * math.cos(ph * 2 * math.pi)
     fade = min(1.0, t_local / 0.8, (dur - t_local) / 0.8)
     d.rectangle([CARD_X, CARD_Y, CARD_X + CARD_W, CARD_Y + CARD_H], fill=(255, 255, 255, int(110 * fade)))
-    r = 120 + 150 * grow
+    r = 170 + 120 * grow
     cx, cy = CARD_X + CARD_W - 400, CARD_Y + CARD_H / 2
     for k, al in ((1.3, 60), (1.15, 100), (1.0, 230)):
         rr = r * k
         d.ellipse([cx - rr, cy - rr, cx + rr, cy + rr], fill=(160, 110, 240, int(al * fade)))
     d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=(255, 255, 255, int(255 * fade)), width=6)
-    font = ImageFont.truetype(FONT_BIG, 60)
+    font = ImageFont.truetype(FONT_BIG, 50)
     word = "breathe in" if ph < 0.5 else "breathe out"
     d.text((cx, cy), word, font=font, fill=(255, 255, 255, int(255 * fade)), anchor="mm")
     return layer
