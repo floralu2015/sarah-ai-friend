@@ -46,8 +46,8 @@ SHOTS = [
     (5.0, (862, 680, 640), "A balanced day helps you feel your best.", {}),
     (5.5, (862, 600, 520), "Screen time, homework, and reading real books...", {}),
     (5.5, (862, 790, 520), "...plus art, ping pong, playing outside, and good sleep.", {}),
-    (6.0, (1230, 680, 620), "Mommy and Daddy love you so much, Sarah.", {}),
-    (5.5, (1230, 680, 520), "You can always talk to them about how you feel.", {}),
+    (6.0, (1230, 680, 800), "Mommy and Daddy love you so much, Sarah.", {}),
+    (5.5, (1230, 720, 600), "You can always talk to them about how you feel.", {}),
     (5.0, (1515, 650, 560), "Sarah's Smart Screen Rules:", {}),
     (5.5, (1515, 600, 460), "Learn and create, bright rooms, no screens in bed.", {}),
     (5.5, (1515, 770, 460), "Healthy distance, breaks, other fun, and asking for help.", {}),
@@ -162,13 +162,13 @@ def caption_layer(text, alpha, rise, big):
     lines = wrap(text, font, 1500, d)
     lh = font.size * 1.22
     tw = max(d.textlength(l, font=font) for l in lines)
-    bw, bh = tw + 110, lh * len(lines) + 44
+    bw, bh = tw + 160, lh * len(lines) + 44
     cx, cy = W / 2, CARD_Y + CARD_H + (H - CARD_Y - CARD_H) / 2 + rise
     box = [cx - bw / 2, cy - bh / 2, cx + bw / 2, cy + bh / 2]
     d.rounded_rectangle([box[0] + 4, box[1] + 8, box[2] + 4, box[3] + 8], 40, fill=(120, 60, 140, 60))
     d.rounded_rectangle(box, 40, fill=(255, 255, 255, 240), outline=(255, 120, 175, 255), width=5)
-    heart(d, box[0] + 34, cy + 2, 13, (255, 105, 160, 255))
-    heart(d, box[2] - 34, cy + 2, 13, (175, 120, 255, 255))
+    heart(d, box[0] + 42, cy + 2, 13, (255, 105, 160, 255))
+    heart(d, box[2] - 42, cy + 2, 13, (175, 120, 255, 255))
     for i, l in enumerate(lines):
         y = cy - lh * len(lines) / 2 + i * lh + (lh - font.size) / 2 - 4
         d.text((cx, y), l, font=font, fill=(90, 40, 130, 255), anchor="mt")
@@ -186,12 +186,14 @@ def breathe_layer(t_local, dur):
     ph = (t_local % cycle) / cycle
     grow = 0.5 - 0.5 * math.cos(ph * 2 * math.pi)
     fade = min(1.0, t_local / 0.8, (dur - t_local) / 0.8)
-    r = 70 + 110 * grow
-    cx, cy = CARD_X + CARD_W - 230, CARD_Y + 230
-    for k, al in ((1.25, 50), (1.1, 80), (1.0, 170)):
+    d.rectangle([CARD_X, CARD_Y, CARD_X + CARD_W, CARD_Y + CARD_H], fill=(255, 255, 255, int(110 * fade)))
+    r = 120 + 150 * grow
+    cx, cy = CARD_X + CARD_W - 400, CARD_Y + CARD_H / 2
+    for k, al in ((1.3, 60), (1.15, 100), (1.0, 230)):
         rr = r * k
-        d.ellipse([cx - rr, cy - rr, cx + rr, cy + rr], fill=(185, 150, 255, int(al * fade)))
-    font = ImageFont.truetype(FONT_BIG, 46)
+        d.ellipse([cx - rr, cy - rr, cx + rr, cy + rr], fill=(160, 110, 240, int(al * fade)))
+    d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=(255, 255, 255, int(255 * fade)), width=6)
+    font = ImageFont.truetype(FONT_BIG, 60)
     word = "breathe in" if ph < 0.5 else "breathe out"
     d.text((cx, cy), word, font=font, fill=(255, 255, 255, int(255 * fade)), anchor="mm")
     return layer
@@ -220,7 +222,7 @@ def render(src_path, out_path, audio_path):
     ff = subprocess.Popen(
         ["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
          "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-", "-i", audio_path,
-         "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-pix_fmt", "yuv420p",
+         "-c:v", "libx264", "-preset", "medium", "-crf", "24", "-pix_fmt", "yuv420p",
          "-c:a", "aac", "-b:a", "160k", "-shortest", "-movflags", "+faststart", out_path],
         stdin=subprocess.PIPE,
     )
